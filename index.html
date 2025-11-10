@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Portal</title>
+    
+    <!-- Basic CSS Styles -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            background-color: #fff;
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* For mobile */
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .main-nav {
+            margin: 0 10px;
+        }
+
+        .main-nav a,
+        .action-links a {
+            text-decoration: none;
+            color: #555;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+        
+        .main-nav a:hover,
+        .action-links a:hover {
+            background-color: #f0f0f0;
+            color: #007bff;
+        }
+
+        .action-links a.login-btn {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .action-links a.login-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        /* Mobile nav (simplified) */
+        .mobile-nav {
+            display: none;
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* --- Page Content --- */
+        .page-content {
+            display: none; /* Hidden by default */
+            padding-top: 20px;
+        }
+        
+        /* Show the home page by default */
+        #home-page {
+            display: block;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        /* --- Reusable Components --- */
+        .card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background-color: #eee;
+        }
+        .product-card-content {
+            padding: 15px;
+        }
+        .product-card h3 {
+            font-size: 18px;
+            margin: 0 0 10px 0;
+        }
+        .product-card .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        /* --- Forms --- */
+        .form-container {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
+        }
+        .form-error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        .form-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none; /* Hidden by default */
+        }
+
+        /* --- Other Pages --- */
+        .order-item, .wishlist-item {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .support-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .support-container > div {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        /* --- Modal --- */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 5px;
+            position: relative;
+        }
+        .modal-close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal-close:hover {
+            color: black;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: #333;
+            color: #eee;
+            padding: 30px 0;
+            margin-top: 30px;
+        }
+        footer .container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        footer div {
+            flex-basis: 200px; /* Each column has a base width */
+        }
+        footer h4 {
+            font-size: 18px;
+            margin-top: 0;
+        }
+        footer a {
+            color: #eee;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Media Query */
+        @media (max-width: 600px) {
+            header .container {
+                flex-direction: column;
+            }
+            .main-nav, .action-links {
+                display: none; /* Hide desktop nav */
+            }
+            .mobile-nav {
+                display: block; /* Show mobile nav */
+            }
+            .grid-container {
+                grid-template-columns: 1fr; /* Stack cards on mobile */
+            }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container">
+            <a href="#" class="logo nav-link" data-page="home">Shoppers Loop</a>
+            
+            <!-- Main Navigation (Feature 1) -->
+            <div class="main-nav">
+                <a href="#" class="nav-link" data-page="home">Home</a>
+                <a href="#" class="nav-link" data-page="products">Product Items</a>
+                <a href="#" class="nav-link" data-page="about">About Us</a>
+                <a href="#" class="nav-link" data-page="contact">Contact Us</a>
+            </div>
+            
+            <!-- Action Icons -->
+            <div class="action-links">
+                <a href="#" class="nav-link" data-page="wishlist" aria-label="Wishlist">Wishlist (3)</a>
+                <a href="#" class="nav-link" data-page="orders" aria-label="My Orders">My Orders</a>
+                <a href="#" class="nav-link" data-page="support" aria-label="Customer Support">Support</a>
+                <a href="#" class="nav-link login-btn" data-page="login">Login</a>
+            </div>
+
+            <!-- Mobile Nav Toggle (Simple) -->
+            <div class="mobile-nav">
+                <a href="#" class="nav-link" data-page="home">Home</a>
+                <a href="#" class="nav-link" data-page="products">Products</a>
+                <a href="#" class="nav-link" data-page="about">About</a>
+                <a href="#" class="nav-link" data-page="contact">Contact</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container">
+
+        <!-- Page: Home -->
+        <div id="home-page" class="page-content">
+            <!-- Hero Section -->
+            <section class="card" style="background-color: #007bff; color: white; text-align: center;">
+                <h1>Welcome to Shoppers Loop</h1>
+                <p style="font-size: 18px;">Your one-stop shop for everything you need.</p>
+                <a href="#" class="nav-link btn" data-page="products" style="background-color: white; color: #007bff; font-weight: bold; width: auto;">
+                    Shop Now
+                </a>
+            </section>
+            
+            <!-- Featured Products -->
+            <section>
+                <h2>Featured Products</h2>
+                <div class="grid-container">
+                    <!-- Sample Product Card -->
+                    <div class="product-card">
+                        <img src="https://placehold.co/400x300/e2e8f0/334155?text=Product" alt="Product Image">
+                        <div class="product-card-content">
+                            <h3>Smart Watch</h3>
+                            <p class="price">$199.99</p>
+                            <button class="btn">Add to Cart</button>
+                        </div>
+                    </div>
+                    <!-- More products... -->
+                    <div class="product-card">
+                        <img src="https://placehold.co/400x300/dbeafe/1e3a8a?text=Product" alt="Product Image">
+                        <div class="product-card-content">
+                            <h3>Headphones</h3>
+                            <p class="price">$89.99</p>
+                            <button class="btn">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://placehold.co/400x300/e0f2fe/0891b2?text=Product" alt="Product Image">
+                        <div class="product-card-content">
+                            <h3>Coffee Maker</h3>
+                            <p class="price">$49.99</p>
+                            <button class="btn">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://placehold.co/400x300/fef3c7/b45309?text=Product" alt="Product Image">
+                        <div class="product-card-content">
+                            <h3>Running Shoes</h3>
+                            <p class="price">$120.00</p>
+                            <button class="btn">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Page: Product Items (Feature 1) -->
+        <div id="products-page" class="page-content">
+            <h1>All Products</h1>
+            <div class="grid-container">
+                <!-- Product Card 1 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x300/e2e8f0/334155?text=Product+1" alt="Product 1">
+                    <div class="product-card-content">
+                        <h3>Smart Watch</h3>
+                        <p class="price">$199.99</p>
+                        <button class="btn">Add to Cart</button>
+                        <button class="btn btn-secondary review-btn" style="margin-top: 10px;">See Reviews</button>
+                    </div>
+                </div>
+                <!-- Product Card 2 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x300/dbeafe/1e3a8a?text=Product+2" alt="Product 2">
+                    <div class="product-card-content">
+                        <h3>Wireless Headphones</h3>
+                        <p class="price">$89.99</p>
+                        <button class="btn">Add to Cart</button>
+                        <button class="btn btn-secondary review-btn" style="margin-top: 10px;">See Reviews</button>
+                    </div>
+                </div>
+                <!-- More products... -->
+            </div>
+        </div>
+
+        <!-- Page: About Us (Feature 1) -->
+        <div id="about-page" class="page-content">
+            <div class="card form-container">
+                <h1>About Shoppers Loop</h1>
+                <p>
+                    Welcome to Shoppers Loop, your number one source for all things tech, fashion, and home. We're dedicated to giving you the very best products.
+                </p>
+                <p>
+                    Founded in 2024, Shoppers loop has come a long way from its beginnings. We hope you enjoy our products as much as we enjoy offering them to you.
+                </p>
+            </div>
+        </div>
+
+        <!-- Page: Contact Us (Feature 1) -->
+        <div id="contact-page" class="page-content">
+            <div class="card form-container">
+                <h1>Contact Us</h1>
+                <form>
+                    <div class="form-group">
+                        <label for="contact-name">Full Name</label>
+                        <input type="text" id="contact-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Email Address</label>
+                        <input type="email" id="contact-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Message</label>
+                        <textarea id="contact-message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Page: Login (Feature 2) -->
+        <div id="login-page" class="page-content">
+            <div class="card form-container">
+                <h1>Login</h1>
+                <div id="login-success-message" class="form-success">
+                    Login successful! Redirecting...
+                </div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email">
+                        <p id="login-email-error" class="form-error"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password">
+                        <p id="login-password-error" class="form-error"></p>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                <p style="text-align: center; margin-top: 15px;">
+                    Don't have an account? 
+                    <a href="#" class="nav-link" data-page="register">Register here</a>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Page: Register (Feature 2) -->
+        <div id="register-page" class="page-content">
+            <div class="card form-container">
+                <h1>Create Account</h1>
+                <div id="register-success-message" class="form-success">
+                    Registration successful! Please log in.
+                </div>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name">
+                        <p id="register-name-error" class="form-error"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email Address</label>
+                        <input type="email" id="register-email">
+                        <p id="register-email-error" class="form-error"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password">
+                        <p id="register-password-error" class="form-error"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirm Password</label>
+                        <input type="password" id="register-confirm-password">
+                        <p id="register-confirm-password-error" class="form-error"></p>
+                    </div>
+                    <button type="submit" class="btn">Register</button>
+                </form>
+                <p style="text-align: center; margin-top: 15px;">
+                    Already have an account? 
+                    <a href="#" class="nav-link" data-page="login">Login here</a>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Page: Orders List (Feature 3) -->
+        <div id="orders-page" class="page-content">
+            <div class="card">
+                <h1>My Orders</h1>
+                <div class="order-list">
+                    <!-- Order Item 1 -->
+                    <div class="order-item">
+                        <div>
+                            <h3>Order #120984</h3>
+                            <p>Placed on: Nov 10, 2025</p>
+                        </div>
+                        <div>
+                            <span style="color: green;">Delivered</span>
+                        </div>
+                        <div>
+                            <p style="font-weight: bold;">$289.98</p>
+                        </div>
+                        <button class="btn btn-secondary btn-small">View Details</button>
+                    </div>
+                    <!-- Order Item 2 -->
+                    <div class="order-item">
+                        <div>
+                            <h3>Order #120912</h3>
+                            <p>Placed on: Nov 05, 2025</p>
+                        </div>
+                        <div>
+                            <span style="color: orange;">Shipped</span>
+                        </div>
+                        <div>
+                            <p style="font-weight: bold;">$49.99</p>
+                        </div>
+                        <button class="btn btn-secondary btn-small">Track Package</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Page: Wishlist (Feature 3) -->
+        <div id="wishlist-page" class="page-content">
+            <h1>My Wishlist (3)</h1>
+            <div class="grid-container">
+                <!-- Wishlist Item 1 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x300/dbeafe/1e3a8a?text=Product+2" alt="Product 2">
+                    <div class="product-card-content">
+                        <h3>Wireless Headphones</h3>
+                        <p class="price">$89.99</p>
+                        <button class="btn">Add to Cart</button>
+                        <button class="btn btn-danger" style="margin-top: 10px;">Remove</button>
+                    </div>
+                </div>
+                <!-- More wishlist items... -->
+            </div>
+        </div>
+        
+        <!-- Page: Customer Care & Reporting (Feature 3) -->
+        <div id="support-page" class="page-content">
+            <div class="card">
+                <h1>Customer Support</h1>
+                <div class="support-container">
+                    <!-- Section: Customer Care (FAQs) -->
+                    <div>
+                        <h2>Frequently Asked Questions</h2>
+                        <div>
+                            <h3>How do I track my order?</h3>
+                            <p>You can track your order from the "My Orders" page.</p>
+                        </div>
+                        <div>
+                            <h3>What is your return policy?</h3>
+                            <p>We offer a 30-day return policy on most items.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Section: Reporting Options -->
+                    <div>
+                        <h2>Report an Issue</h2>
+                        <form>
+                            <div class="form-group">
+                                <label for="support-order-id">Order ID (Optional)</label>
+                                <input type="text" id="support-order-id">
+                            </div>
+                            <div class="form-group">
+                                <label for="support-issue-type">Issue Type</label>
+                                <select id="support-issue-type">
+                                    <option>Order Issue</option>
+                                    <option>Product Defect</option>
+                                    <option>Website Bug</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="support-message">Describe the Issue</label>
+                                <textarea id="support-message" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-danger">Submit Report</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </main>
+    
+    <!-- Reviews Modal (Feature 3: Comments & Reviews) -->
+    <div id="reviews-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal-btn" class="modal-close">&times;</span>
+            <h2>Product Reviews</h2>
+            
+            <!-- Existing Reviews -->
+            <div style="margin-bottom: 20px;">
+                <div style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                    <p><strong>Jane D.</strong> - <span>Oct 28, 2025</span></p>
+                    <p style="color: #f0ad4e;">★★★★★</p>
+                    <p>Absolutely love this product! Highly recommend.</p>
+                </div>
+                <div>
+                    <p><strong>Mark R.</strong> - <span>Oct 25, 2025</span></p>
+                    <p style="color: #f0ad4e;">★★★☆☆</p>
+                    <p>Good product, but the instructions were a bit confusing.</p>
+                </div>
+            </div>
+            
+            <!-- Add Review Form -->
+            <form>
+                <h3>Write a Review</h3>
+                <div class="form-group">
+                    <label for="review-rating">Rating</label>
+                    <select id="review-rating">
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="review-comment">Comment</label>
+                    <textarea id="review-comment" rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div>
+                <h4>Shoppers Loop</h4>
+                <p>Your one-stop shop for quality and style. All rights reserved.</p>
+            </div>
+            <div>
+                <h4>Quick Links</h4>
+                <a href="#" class="nav-link" data-page="home">Home</a>
+                <a href="#" class="nav-link" data-page="products">Products</a>
+                <a href="#" class="nav-link" data-page="orders">My Orders</a>
+            </div>
+            <div>
+                <h4>Support</h4>
+                <a href="#" class="nav-link" data-page="support">Customer Care</a>
+                <a href="#" class="nav-link" data-page="contact">Contact Us</a>
+                <a href="#" class="nav-link" data-page="about">About Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Page Navigation ---
+            const allPages = document.querySelectorAll('.page-content');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            function showPage(pageId) {
+                // Hide all pages
+                allPages.forEach(page => {
+                    page.style.display = 'none';
+                });
+                
+                // Show the target page
+                const targetPage = document.getElementById(pageId + '-page');
+                if (targetPage) {
+                    targetPage.style.display = 'block';
+                    window.scrollTo(0, 0); // Scroll to top on page change
+                } else {
+                    console.warn('Page not found:', pageId);
+                    document.getElementById('home-page').style.display = 'block'; // Default to home
+                }
+            }
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = link.dataset.page;
+                    if (pageId) {
+                        showPage(pageId);
+                    }
+                });
+            });
+            
+            // --- Form Validation (Feature 2) ---
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            
+            // Helper function to show errors
+            function showError(fieldId, message) {
+                const errorEl = document.getElementById(fieldId + '-error');
+                if(errorEl) errorEl.textContent = message;
+            }
+            
+            // Helper function to clear errors
+            function clearErrors(form) {
+                form.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+            }
+            
+            // Helper for email regex
+            function isValidEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(String(email).toLowerCase());
+            }
+
+            // Login Form Validation
+            if (loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    clearErrors(loginForm);
+                    let isValid = true;
+                    
+                    const email = document.getElementById('login-email').value;
+                    const password = document.getElementById('login-password').value;
+                    
+                    if (!email || !isValidEmail(email)) {
+                        showError('login-email', 'Please enter a valid email address.');
+                        isValid = false;
+                    }
+                    
+                    if (!password) {
+                        showError('login-password', 'Please enter your password.');
+                        isValid = false;
+                    }
+                    
+                    if (isValid) {
+                        console.log('Login form valid:', { email, password });
+                        // Show success message (no alert!)
+                        document.getElementById('login-success-message').style.display = 'block';
+                        loginForm.style.display = 'none';
+                        
+                        // Simulate redirect
+                        setTimeout(() => {
+                            showPage('home');
+                            loginForm.style.display = 'block';
+                            document.getElementById('login-success-message').style.display = 'none';
+                            loginForm.reset();
+                        }, 2000);
+                    }
+                });
+            }
+            
+            // Registration Form Validation
+            if (registerForm) {
+                registerForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    clearErrors(registerForm);
+                    let isValid = true;
+                    
+                    const name = document.getElementById('register-name').value;
+                    const email = document.getElementById('register-email').value;
+                    const password = document.getElementById('register-password').value;
+                    const confirmPassword = document.getElementById('register-confirm-password').value;
+                    
+                    if (!name) {
+                        showError('register-name', 'Full name is required.');
+                        isValid = false;
+                    }
+                    
+                    if (!email || !isValidEmail(email)) {
+                        showError('register-email', 'Please enter a valid email address.');
+                        isValid = false;
+                    }
+                    
+                    if (!password || password.length < 8) {
+                        showError('register-password', 'Password must be at least 8 characters long.');
+                        isValid = false;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        showError('register-confirm-password', 'Passwords do not match.');
+                        isValid = false;
+                    }
+                    
+                    if (isValid) {
+                        console.log('Register form valid:', { name, email, password });
+                        // Show success message
+                        document.getElementById('register-success-message').style.display = 'block';
+                        registerForm.style.display = 'none';
+                        
+                        setTimeout(() => {
+                            showPage('login');
+                            registerForm.style.display = 'block';
+                            document.getElementById('register-success-message').style.display = 'none';
+                            registerForm.reset();
+                        }, 2000);
+                    }
+                });
+            }
+            
+            // --- Reviews Modal Logic (Feature 3) ---
+            const reviewsModal = document.getElementById('reviews-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const reviewBtns = document.querySelectorAll('.review-btn');
+            
+            function openModal() {
+                reviewsModal.style.display = 'block';
+            }
+            
+            function closeModal() {
+                reviewsModal.style.display = 'none';
+            }
+            
+            reviewBtns.forEach(btn => btn.addEventListener('click', openModal));
+            closeModalBtn.addEventListener('click', closeModal);
+            
+            // Close modal on outside click
+            window.addEventListener('click', (e) => {
+                if (e.target === reviewsModal) {
+                    closeModal();
+                }
+            });
+            
+        });
+    </script>
+</body>
+</html>
